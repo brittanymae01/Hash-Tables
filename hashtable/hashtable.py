@@ -7,9 +7,14 @@ class HashTableEntry:
         self.key = key
         self.value = value
         self.next = None
+        
 
 
 class HashTable:
+
+    def __init__(self, capacity):
+        self.capacity = capacity
+        self.hash_table = [None] * self.capacity
     """
     A hash table that with `capacity` buckets
     that accepts string keys
@@ -24,7 +29,14 @@ class HashTable:
         Implement this, and/or DJB2.
         """
 
-    def djb2(self, key):
+    def djb2(self, key):                                                                                                                    
+        hash = 5381
+        for x in key:
+            hash = (( hash << 5) + hash) + ord(x)
+        return hash & 0xFFFFFFFF
+
+
+
         """
         DJB2 32-bit hash function
 
@@ -40,6 +52,10 @@ class HashTable:
         return self.djb2(key) % self.capacity
 
     def put(self, key, value):
+
+        index = self.hash_index(key)
+        self.hash_table[index] = value
+
         """
         Store the value with the given key.
 
@@ -49,6 +65,8 @@ class HashTable:
         """
 
     def delete(self, key):
+        index = self.hash_index(key)
+        self.hash_table[index] = None
         """
         Remove the value stored with the given key.
 
@@ -58,6 +76,11 @@ class HashTable:
         """
 
     def get(self, key):
+
+        index = self.hash_index(key)
+        return self.hash_table[index]
+
+
         """
         Retrieve the value stored with the given key.
 
