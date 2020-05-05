@@ -7,14 +7,64 @@ class HashTableEntry:
         self.key = key
         self.value = value
         self.next = None
+
+class LinkedList:
+    def __init__(self, node=None):
+        self.head = node
+        self.tail = node
+
+    def add_to_tail(self, key, value):        
+        n = HashTableEntry(key, value)
+        if self.head is None:
+            self.head = n
+            return
+        cur = self.head
+
+        while cur.next is not None:
+            if cur.key == key:
+                cur.value = value
+            cur = cur.next
         
+        cur.next = n
+
+    def find(self, key):
+        cur = self.head
+
+        while cur is not None:
+            if cur.key == key:
+                return cur.value
+
+            cur = cur.next
+
+        return None
+
+    def delete(self, key):
+        cur = self.head
+
+        if cur.key == key:
+            self.head = self.head.next
+            cur.next = None
+            return cur
+
+        prev = None
+
+        while cur is not None:
+            if cur.key == key:
+                prev.next = cur.next
+                cur.next = None
+                return cur
+            prev = cur
+            cur = cur.next
+
+        return None
+
 
 
 class HashTable:
 
     def __init__(self, capacity):
         self.capacity = capacity
-        self.hash_table = [None] * self.capacity
+        self.hash_table = [LinkedList()] * self.capacity
     """
     A hash table that with `capacity` buckets
     that accepts string keys
@@ -54,7 +104,8 @@ class HashTable:
     def put(self, key, value):
 
         index = self.hash_index(key)
-        self.hash_table[index] = value
+        # self.hash_table[index] = value
+        self.hash_table[index].add_to_tail(key, value)
 
         """
         Store the value with the given key.
@@ -66,7 +117,7 @@ class HashTable:
 
     def delete(self, key):
         index = self.hash_index(key)
-        self.hash_table[index] = None
+        self.hash_table[index].delete(key)
         """
         Remove the value stored with the given key.
 
@@ -78,7 +129,7 @@ class HashTable:
     def get(self, key):
 
         index = self.hash_index(key)
-        return self.hash_table[index]
+        return self.hash_table[index].find(key)
 
 
         """
